@@ -100,12 +100,6 @@ uint32_t maxOffsDone;                      // max of offset done
 uint32_t setA;
 uint32_t ecaDoCounter;                     // counts number of valid ECA actions
 
-// constants (as variables to have a defined type)
-uint64_t  one_us_ns = 1000;
-
-// debug 
-uint64_t t1, t2;
-int32_t  tmp1;
 
 void init() // typical init for lm32
 {
@@ -219,7 +213,9 @@ uint32_t extern_entryActionOperation()
 
   // flush ECA queue for lm32
   i = 0;
-  while (fwlib_wait4ECAEvent(1000, &tDummy, &eDummy, &pDummy, &fDummy, &flagDummy1, &flagDummy2, &flagDummy3, &flagDummy4) !=  COMMON_ECADO_TIMEOUT) {i++;}
+  while (fwlib_wait4ECAEvent(1000, &tDummy, &eDummy, &pDummy, &fDummy, &flagDummy1, &flagDummy2, &flagDummy3, &flagDummy4) !=  COMMON_ECADO_TIMEOUT) {
+    i++;
+  }
   DBPRINT1("uni-blm: ECA queue flushed - removed %d pending entries from ECA queue\n", i);
     
   // init get values
@@ -275,7 +271,7 @@ uint32_t doActionOperation(uint64_t *tAct,                    // actual time
         recSid = (uint32_t)((recEvtId >> 20) & 0x00000fff);
 
         uint16_t registerValue = recSid & 0xff; // Sequence Id equals Dataset at bit pos 0
-        registerValue |= (receivedTag & 0xf) << 8; // counter group at bit pos 8
+        registerValue |= (receivedTag & 0xf) << 8; // counter group at bit pos 8. It is taken from the received tag
         registerValue |= 0x1000; // trigger
 
         pScuBaseAddress[BUS_SLAVE_OFFSET(diobSlotNumber)+EVENT_THRESHOLD_RELOAD_REGISTER] = registerValue;
