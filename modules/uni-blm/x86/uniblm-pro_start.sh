@@ -52,7 +52,7 @@ uniblm-ctl $TRGW startop
 
 # lm32 listens to timing messages
 # UNIBLM_ECADO_EVT_BEAM_ON: listen to beam on
-saft-ecpu-ctl $SDGW -c 0x1250006000000000 0xfffffff000000000 0 0x006 -d
+#saft-ecpu-ctl $SDGW -c 0x1250006000000000 0xfffffff000000000 0 0x006 -d
 
 ###########################################
 # reset diagnostics

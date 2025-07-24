@@ -17,7 +17,7 @@
 // activity requested by ECA Handler, the relevant codes are also used as "tags"
 #define UNIBLM_ECADO_TIMEOUT    COMMON_ECADO_TIMEOUT
 #define UNIBLM_ECADO_UNKOWN                   1   // unkown activity requested (unexpected action by ECA)
-#define UNIBLM_ECADO_EVT_BEAM_ON          0x006   // EVT_BEAM_ON
+//#define UNIBLM_ECADO_EVT_BEAM_ON          0x006   // EVT_BEAM_ON
 
 // commands from the outside
 
