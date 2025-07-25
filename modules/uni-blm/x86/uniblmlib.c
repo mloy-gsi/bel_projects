@@ -155,13 +155,6 @@ uint32_t uniblm_firmware_open(uint64_t *ebDevice, const char* devName, uint32_t 
   uniblm_set_setEventKey  = lm32_base + SHARED_OFFS + UNIBLM_SHARED_SET_EVENT_KEY;
   uniblm_get_getReloadCounter = lm32_base + SHARED_OFFS + UNIBLM_SHARED_GET_RELOAD_COUNTER;
 
-
-  printf("lm32_base: %lx\n", lm32_base);
-  printf("SHARED_OFFS: %x\n", SHARED_OFFS);
-  printf("COMMON_SHARED_END: %x\n", COMMON_SHARED_END);
-  printf("UNIBLM_SHARED_GET_RELOAD_COUNTER: %x\n", UNIBLM_SHARED_GET_RELOAD_COUNTER);
-  printf("uniblm_get_getReloadCounter: %lx\n", uniblm_get_getReloadCounter);
-
   // do this just at the very end
   *ebDevice = (uint64_t)eb_device;
 
