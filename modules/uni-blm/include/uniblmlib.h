@@ -125,7 +125,7 @@ extern "C" {
   
   // get info from firmware, returns error code
   uint32_t uniblm_info_read(uint64_t ebDevice,                   // EB device
-                            uint32_t *getC,                      // get value C
+                            uint32_t *getReloadCounter,          // get value ReloadCounter
                             uint32_t *getD,                      // get value D
                             int printFlag                        // print info to screen
                             );
