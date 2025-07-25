@@ -95,7 +95,7 @@ int32_t  comLatency;                       // latency for messages received via 
 int32_t  maxComLatency;                    // max of com latency
 uint32_t maxOffsDone;                      // max of offset done
 
-uint32_t setA;
+uint32_t eventKey;
 uint32_t reloadCounter;                     // counts number of valid ECA actions
 
 
@@ -121,7 +121,7 @@ void initSharedMem(uint32_t *reqState, uint32_t *sharedSize)
   pShared                    = (uint32_t *)_startshared;
 
   // get address to data
-  pSharedSetEventKey         = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_EVENT_KEY                 >> 2));
+  pSharedSetEventKey         = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_EVENT_KEY         >> 2));
   pSharedGetReloadCounter    = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_RELOAD_COUNTER    >> 2));
 
   // find address of CPU from external perspective
@@ -179,17 +179,14 @@ void extern_clearDiag()
 // entry action 'configured' state
 uint32_t extern_entryActionConfigured()
 {
-  uint32_t status = COMMON_STATUS_OK;
-
-  setA          =  *pSharedSetEventKey;
+  eventKey     =  *pSharedSetEventKey;
+  pp_printf("eventKey = %u\n", eventKey);
 
   // get and publish NIC data
   fwlib_publishNICData(); 
 
-  // if everything is ok, we must return with COMMON_STATUS_OK
-  if (status == MIL_STAT_OK) status = COMMON_STATUS_OK;
 
-  return status;
+  return COMMON_STATUS_OK;
 } // extern_entryActionConfigured
 
 
@@ -312,6 +309,7 @@ int main(void) {
   pubState       = COMMON_STATE_UNKNOWN;
   status         = COMMON_STATUS_OK;
 
+  eventKey = 0;
   reloadCounter  = 0;
   nEvtsLate      = 0;
 
