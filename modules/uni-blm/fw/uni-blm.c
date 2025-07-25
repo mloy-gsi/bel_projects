@@ -84,7 +84,7 @@ uint64_t SHARED  dummy = 0;
 volatile uint32_t *pShared;                // pointer to begin of shared memory region
 volatile uint32_t *pSharedSetA;            // pointer to a "user defined" u32 register; here: set value A
 volatile uint32_t *pSharedSetB;            // pointer to a "user defined" u32 register; here: set value B
-volatile uint32_t *pSharedGetC;            // pointer to a "user defined" u32 register; here: get value C
+volatile uint32_t *pSharedGetReloadCounter; // pointer to a "user defined" u32 register; here: get counter of reload events
 volatile uint32_t *pSharedGetD;            // pointer to a "user defined" u32 register; here: get value D
 
 uint32_t *cpuRamExternal;                  // external address (seen from host bridge) of this CPU's RAM
@@ -98,7 +98,7 @@ int32_t  maxComLatency;                    // max of com latency
 uint32_t maxOffsDone;                      // max of offset done
 
 uint32_t setA;
-uint32_t ecaDoCounter;                     // counts number of valid ECA actions
+uint32_t reloadCounter;                     // counts number of valid ECA actions
 
 
 void init() // typical init for lm32
@@ -125,7 +125,7 @@ void initSharedMem(uint32_t *reqState, uint32_t *sharedSize)
   // get address to data
   pSharedSetA                = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_A                 >> 2));
   pSharedSetB                = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_B                 >> 2));
-  pSharedGetC                = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_C                 >> 2));
+  pSharedGetReloadCounter    = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_RELOAD_COUNTER    >> 2));
   pSharedGetD                = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_D                 >> 2));
 
   // find address of CPU from external perspective
@@ -176,7 +176,7 @@ void extern_clearDiag()
   comLatency    = 0x0;
   maxComLatency = 0x0;
   maxOffsDone   = 0x0;
-  ecaDoCounter  = 0x0;
+  reloadCounter = 0x0;
 } // extern_clearDiag 
 
 
@@ -219,7 +219,7 @@ uint32_t extern_entryActionOperation()
   DBPRINT1("uni-blm: ECA queue flushed - removed %d pending entries from ECA queue\n", i);
     
   // init get values
-  *pSharedGetC              = 0x0;
+  *pSharedGetReloadCounter  = 0x0;
   *pSharedGetD              = 0x0;
 
   nEvtsLate                 = 0;
@@ -227,7 +227,7 @@ uint32_t extern_entryActionOperation()
   comLatency                = 0;
   maxComLatency             = 0;
   maxOffsDone               = 0;
-  ecaDoCounter              = 0;
+  reloadCounter             = 0;
 
   return COMMON_STATUS_OK;
 } // extern_entryActionOperation
@@ -277,10 +277,10 @@ uint32_t doActionOperation(uint64_t *tAct,                    // actual time
         pScuBaseAddress[BUS_SLAVE_OFFSET(diobSlotNumber)+EVENT_THRESHOLD_RELOAD_REGISTER] = registerValue;
         pScuBaseAddress[BUS_SLAVE_OFFSET(diobSlotNumber)+EVENT_THRESHOLD_RELOAD_REGISTER] = 0;
 
-        if (!flagIsLate) {
-          ecaDoCounter++;
-        }
-
+        /// @todo What to do?
+        //if (flagIsLate) {
+        //}
+        reloadCounter++;
         offsDone = getSysTime() - recDeadline;
       }
       break;
@@ -317,7 +317,7 @@ int main(void) {
   pubState       = COMMON_STATE_UNKNOWN;
   status         = COMMON_STATUS_OK;
 
-  ecaDoCounter   = 0;
+  reloadCounter  = 0;
   nEvtsLate      = 0;
 
   init();                                                                     // initialize stuff for lm32
@@ -326,7 +326,7 @@ int main(void) {
   fwlib_clearDiag();
   pScuBaseAddress = (uint16_t*)find_device_adr(GSI, SCU_BUS_MASTER);
   if (pScuBaseAddress == (uint16_t*)ERROR_NOT_FOUND) {
-    pp_printf("no scub_base found!\n");
+    pp_printf("no scu bus master base address found!\n");
   }
   // clear common diagnostics data
  
@@ -368,7 +368,7 @@ int main(void) {
     if (offsDone   > maxOffsDone)   maxOffsDone   = offsDone;
     fwlib_publishTransferStatus(0, 0, 0, nEvtsLate, maxOffsDone, maxComLatency);
 
-    *pSharedGetC           = ecaDoCounter;                                    // bogus value
+    *pSharedGetReloadCounter = reloadCounter;
     *pSharedGetD           = setA;
   } // while
 

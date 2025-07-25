@@ -40,8 +40,8 @@
 
 
 // get values
-#define UNIBLM_SHARED_GET_C                 (UNIBLM_SHARED_SET_B                + _32b_SIZE_)  // get value C
-#define UNIBLM_SHARED_GET_D                 (UNIBLM_SHARED_GET_C                + _32b_SIZE_)  // get value D
+#define UNIBLM_SHARED_GET_RELOAD_COUNTER    (UNIBLM_SHARED_SET_B                + _32b_SIZE_)  // get counter of reload events
+#define UNIBLM_SHARED_GET_D                 (UNIBLM_SHARED_GET_RELOAD_COUNTER   + _32b_SIZE_)  // get value D
 
 // diagnosis: end of used shared memory
 #define UNIBLM_SHARED_END                   (UNIBLM_SHARED_GET_D                + _32b_SIZE_) 

@@ -70,7 +70,7 @@ eb_address_t uniblm_set_setA;              // bogus set value
 eb_address_t uniblm_set_setB;              // bogus set value
 
 // get values
-eb_address_t uniblm_get_getC;              // bogus get value
+eb_address_t uniblm_get_getRealodCounter;              // bogus get value
 eb_address_t uniblm_get_getD;              // bogus get value
 
 #define WAITCMDDONE COMMON_DEFAULT_TIMEOUT * 1000 // use default timeout and convert to us to be sure the command is processed
@@ -154,7 +154,7 @@ uint32_t uniblm_firmware_open(uint64_t *ebDevice, const char* devName, uint32_t 
   uniblm_cmd              = lm32_base + SHARED_OFFS + COMMON_SHARED_CMD;
   uniblm_set_setA         = lm32_base + SHARED_OFFS + UNIBLM_SHARED_SET_A;
   uniblm_set_setB         = lm32_base + SHARED_OFFS + UNIBLM_SHARED_SET_B;
-  uniblm_get_getC         = lm32_base + SHARED_OFFS + UNIBLM_SHARED_GET_C;
+  uniblm_get_getRealodCounter = lm32_base + SHARED_OFFS + UNIBLM_SHARED_GET_RELOAD_COUNTER;
   uniblm_get_getD         = lm32_base + SHARED_OFFS + UNIBLM_SHARED_GET_D;
 
   // do this just at the very end
@@ -225,7 +225,7 @@ uint32_t uniblm_info_read(uint64_t ebDevice, uint32_t *getC, uint32_t *getD, int
   eb_device = (eb_device_t)ebDevice;
 
   if ((eb_status = eb_cycle_open(eb_device, 0, eb_block, &eb_cycle)) != EB_OK) return COMMON_STATUS_EB;
-  eb_cycle_read(eb_cycle, uniblm_get_getC        , EB_BIG_ENDIAN|EB_DATA32, &(data[0]));
+  eb_cycle_read(eb_cycle, uniblm_get_getRealodCounter        , EB_BIG_ENDIAN|EB_DATA32, &(data[0]));
   eb_cycle_read(eb_cycle, uniblm_get_getD        , EB_BIG_ENDIAN|EB_DATA32, &(data[1]));
   if ((eb_status = eb_cycle_close(eb_cycle)) != EB_OK) return COMMON_STATUS_EB;
 
