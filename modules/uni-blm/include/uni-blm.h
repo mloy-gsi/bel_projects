@@ -35,15 +35,13 @@
 
 // offsets
 // set values
-#define UNIBLM_SHARED_SET_A                 (COMMON_SHARED_END                  + _32b_SIZE_)  // set value A
-#define UNIBLM_SHARED_SET_B                 (UNIBLM_SHARED_SET_A                + _32b_SIZE_)  // set value B
+#define UNIBLM_SHARED_SET_EVENT_KEY         (COMMON_SHARED_END                  + _32b_SIZE_)  // set value A
 
 
 // get values
-#define UNIBLM_SHARED_GET_RELOAD_COUNTER    (UNIBLM_SHARED_SET_B                + _32b_SIZE_)  // get counter of reload events
-#define UNIBLM_SHARED_GET_D                 (UNIBLM_SHARED_GET_RELOAD_COUNTER   + _32b_SIZE_)  // get value D
+#define UNIBLM_SHARED_GET_RELOAD_COUNTER    (UNIBLM_SHARED_SET_EVENT_KEY        + _32b_SIZE_)  // get counter of reload events
 
 // diagnosis: end of used shared memory
-#define UNIBLM_SHARED_END                   (UNIBLM_SHARED_GET_D                + _32b_SIZE_) 
+#define UNIBLM_SHARED_END                   (UNIBLM_SHARED_GET_RELOAD_COUNTER   + _32b_SIZE_)
 
 #endif

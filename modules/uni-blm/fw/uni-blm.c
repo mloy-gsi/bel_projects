@@ -82,10 +82,8 @@ uint64_t SHARED  dummy = 0;
 
 // global variables 
 volatile uint32_t *pShared;                // pointer to begin of shared memory region
-volatile uint32_t *pSharedSetA;            // pointer to a "user defined" u32 register; here: set value A
-volatile uint32_t *pSharedSetB;            // pointer to a "user defined" u32 register; here: set value B
+volatile uint32_t *pSharedSetEventKey;     // pointer to a "user defined" u32 register; here: set event key
 volatile uint32_t *pSharedGetReloadCounter; // pointer to a "user defined" u32 register; here: get counter of reload events
-volatile uint32_t *pSharedGetD;            // pointer to a "user defined" u32 register; here: get value D
 
 uint32_t *cpuRamExternal;                  // external address (seen from host bridge) of this CPU's RAM
 
@@ -123,10 +121,8 @@ void initSharedMem(uint32_t *reqState, uint32_t *sharedSize)
   pShared                    = (uint32_t *)_startshared;
 
   // get address to data
-  pSharedSetA                = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_A                 >> 2));
-  pSharedSetB                = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_B                 >> 2));
+  pSharedSetEventKey         = (uint32_t *)(pShared + (UNIBLM_SHARED_SET_EVENT_KEY                 >> 2));
   pSharedGetReloadCounter    = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_RELOAD_COUNTER    >> 2));
-  pSharedGetD                = (uint32_t *)(pShared + (UNIBLM_SHARED_GET_D                 >> 2));
 
   // find address of CPU from external perspective
   idx = 0;
@@ -185,7 +181,7 @@ uint32_t extern_entryActionConfigured()
 {
   uint32_t status = COMMON_STATUS_OK;
 
-  setA          =  *pSharedSetA;
+  setA          =  *pSharedSetEventKey;
 
   // get and publish NIC data
   fwlib_publishNICData(); 
@@ -220,7 +216,6 @@ uint32_t extern_entryActionOperation()
     
   // init get values
   *pSharedGetReloadCounter  = 0x0;
-  *pSharedGetD              = 0x0;
 
   nEvtsLate                 = 0;
   offsDone                  = 0;
@@ -369,7 +364,6 @@ int main(void) {
     fwlib_publishTransferStatus(0, 0, 0, nEvtsLate, maxOffsDone, maxComLatency);
 
     *pSharedGetReloadCounter = reloadCounter;
-    *pSharedGetD           = setA;
   } // while
 
   return(1); // this should never happen ...
