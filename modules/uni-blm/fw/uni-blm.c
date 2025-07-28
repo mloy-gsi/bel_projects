@@ -39,8 +39,6 @@
 #define UNIBLM_FW_VERSION      0x000001  // make this consistent with makefile
 
 // standard includes
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
 #include <stdint.h>
@@ -52,7 +50,6 @@
 #include "mini_sdb.h"                                                   // sdb stuff
 #include "aux.h"                                                        // cpu and IRQ
 #include "uart.h"                                                       // WR console
-#include "../../../top/gsi_scu/scu_mil.h"                               // register layout of 'MIL macro'
 
 // includes for this project 
 #include <common-defs.h>                                                // common defs for firmware
@@ -95,8 +92,8 @@ int32_t  comLatency;                       // latency for messages received via 
 int32_t  maxComLatency;                    // max of com latency
 uint32_t maxOffsDone;                      // max of offset done
 
-uint32_t eventKey;
-uint32_t reloadCounter;                     // counts number of valid ECA actions
+uint32_t eventKey;                         // used by the BLM diob gateware to filter incoming ECA events
+uint32_t reloadCounter;                    // counts number of valid ECA actions
 
 
 void init() // typical init for lm32
@@ -112,7 +109,6 @@ void initSharedMem(uint32_t *reqState, uint32_t *sharedSize)
 {
   uint32_t idx;
   uint32_t *pSharedTemp;
-  int      i; 
   const uint32_t c_Max_Rams = 10;
   sdb_location   found_sdb[c_Max_Rams];
   sdb_location   found_clu;
@@ -144,13 +140,11 @@ void initSharedMem(uint32_t *reqState, uint32_t *sharedSize)
   DBPRINT2("uni-blm: fw common shared end     0x%08x\n", pShared + (COMMON_SHARED_END >> 2));
 
   // clear shared mem
-  i = 0;
   pSharedTemp        = (uint32_t *)(pShared + (COMMON_SHARED_END >> 2 ) + 1);
   DBPRINT2("uni-blm: fw specific shared begin 0x%08x\n", pSharedTemp);
   while (pSharedTemp < (uint32_t *)(pShared + (UNIBLM_SHARED_END >> 2 ))) {
     *pSharedTemp = 0x0;
     pSharedTemp++;
-    i++;
   } // while pSharedTemp
   DBPRINT2("uni-blm: fw specific shared end   0x%08x\n", pSharedTemp);
 
@@ -193,7 +187,7 @@ uint32_t extern_entryActionConfigured()
 // entry action 'operation' state
 uint32_t extern_entryActionOperation()
 {
-  int      i;
+  unsigned int      i;
   uint64_t tDummy;
   uint64_t eDummy;
   uint64_t pDummy;
@@ -209,7 +203,7 @@ uint32_t extern_entryActionOperation()
   while (fwlib_wait4ECAEvent(1000, &tDummy, &eDummy, &pDummy, &fDummy, &flagDummy1, &flagDummy2, &flagDummy3, &flagDummy4) !=  COMMON_ECADO_TIMEOUT) {
     i++;
   }
-  DBPRINT1("uni-blm: ECA queue flushed - removed %d pending entries from ECA queue\n", i);
+  DBPRINT1("uni-blm: ECA queue flushed - removed %u pending entries from ECA queue\n", i);
     
   // init get values
   *pSharedGetReloadCounter  = 0x0;

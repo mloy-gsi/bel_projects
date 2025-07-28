@@ -23,7 +23,6 @@
 
 // GIDs
 #define GID_INVALID                         0x0   // invalid GID
-#define GID_PZU_QR                        0x250   // UNILAC Timing - Source Right
 
 // constants
 
@@ -35,7 +34,7 @@
 
 // offsets
 // set values
-#define UNIBLM_SHARED_SET_EVENT_KEY         (COMMON_SHARED_END                  + _32b_SIZE_)  // set value A
+#define UNIBLM_SHARED_SET_EVENT_KEY         (COMMON_SHARED_END                  + _32b_SIZE_)  // set event key
 
 
 // get values
